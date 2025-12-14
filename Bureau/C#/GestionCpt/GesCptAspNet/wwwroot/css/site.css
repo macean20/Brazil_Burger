@@ -1,0 +1,88 @@
+body {
+    background-color: #f4f5fb;
+}
+
+.page-title {
+    font-weight: 600;
+}
+
+.search-account input {
+    max-width: 260px;
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    background-color: #ffffff;
+}
+
+.info-card .card-title,
+.history-card .card-title,
+.stats-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.info-line {
+    display: flex;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.info-line .label {
+    width: 130px;
+    color: #555;
+}
+
+.info-line .value {
+    font-weight: 500;
+}
+
+.info-line .link {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.stats-card p {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.table thead th {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    border-bottom-width: 1px;
+}
+
+.table tbody td {
+    font-size: 0.85rem;
+}
+
+.badge-depot {
+    background-color: #28a745;
+    color: #fff;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+}
+
+.badge-retrait {
+    background-color: #dc3545;
+    color: #fff;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+}
+
+.pagination .page-link {
+    font-size: 0.8rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}

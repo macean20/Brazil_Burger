@@ -1,0 +1,7 @@
+/home/macean-dev/Bureau/C#/GestionCpt/GesCptAspNet/obj/Debug/net9.0/GesCptAspNet.GeneratedMSBuildEditorConfig.editorconfig
+/home/macean-dev/Bureau/C#/GestionCpt/GesCptAspNet/obj/Debug/net9.0/GesCptAspNet.AssemblyInfoInputs.cache
+/home/macean-dev/Bureau/C#/GestionCpt/GesCptAspNet/obj/Debug/net9.0/GesCptAspNet.AssemblyInfo.cs
+/home/macean-dev/Bureau/C#/GestionCpt/GesCptAspNet/obj/Debug/net9.0/GesCptAspNet.csproj.CoreCompileInputs.cache
+/home/macean-dev/Bureau/C#/GestionCpt/GesCptAspNet/obj/Debug/net9.0/GesCptAspNet.MvcApplicationPartsAssemblyInfo.cache
+/home/macean-dev/Bureau/C#/GestionCpt/GesCptAspNet/obj/Debug/net9.0/GesCptAspNet.RazorAssemblyInfo.cache
+/home/macean-dev/Bureau/C#/GestionCpt/GesCptAspNet/obj/Debug/net9.0/GesCptAspNet.RazorAssemblyInfo.cs
