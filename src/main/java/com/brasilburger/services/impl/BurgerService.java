@@ -1,16 +1,18 @@
 package com.brasilburger.services.impl;
 
-import com.brasilburger.models.Burger;
-import com.brasilburger.repositories.interfaces.IBurgerRepository;
-import com.brasilburger.services.interfaces.IBurgerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.brasilburger.models.Burger;
+import com.brasilburger.repositories.interfaces.IBurgerRepository;
+import com.brasilburger.services.interfaces.IBurgerService;
+
 public class BurgerService implements IBurgerService {
+
     private static final Logger logger = LoggerFactory.getLogger(BurgerService.class);
     private final IBurgerRepository burgerRepository;
 
@@ -20,14 +22,21 @@ public class BurgerService implements IBurgerService {
 
     @Override
     public Burger createBurger(String nom, String description, BigDecimal prix, String imageUrl) {
+
         if (nom == null || nom.trim().isEmpty()) {
             throw new IllegalArgumentException("Le nom du burger est obligatoire");
         }
+
         if (prix == null || prix.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Le prix doit être supérieur à 0");
         }
+
         if (burgerRepository.existsByNom(nom)) {
             throw new IllegalArgumentException("Un burger avec ce nom existe déjà");
+        }
+
+        if (imageUrl != null && imageUrl.trim().isEmpty()) {
+            imageUrl = null;
         }
 
         Burger burger = new Burger(nom, description, prix);
@@ -54,13 +63,19 @@ public class BurgerService implements IBurgerService {
 
     @Override
     public Burger updateBurger(UUID id, String nom, String description, BigDecimal prix, String imageUrl, boolean disponible) {
+
         Burger existingBurger = getBurgerById(id);
 
         if (nom == null || nom.trim().isEmpty()) {
             throw new IllegalArgumentException("Le nom du burger est obligatoire");
         }
+
         if (prix == null || prix.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Le prix doit être supérieur à 0");
+        }
+
+        if (imageUrl != null && imageUrl.trim().isEmpty()) {
+            imageUrl = null;
         }
 
         existingBurger.setNom(nom);
@@ -84,6 +99,7 @@ public class BurgerService implements IBurgerService {
         Burger burger = getBurgerById(id);
         burger.setDisponible(!burger.isDisponible());
         burgerRepository.update(burger);
+
         logger.info("Disponibilité du burger {} changée à: {}", burger.getNom(), burger.isDisponible());
     }
 }
