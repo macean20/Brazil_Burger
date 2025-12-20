@@ -1,0 +1,92 @@
+@model MesCommandesViewModel
+@{
+    ViewData["Title"] = "Mes Commandes";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="fw-bold mb-4">
+                <i class="bi bi-bag-check me-2"></i>Mes Commandes
+            </h2>
+        </div>
+    </div>
+
+    @if (Model.Commandes.Any())
+    {
+        <div class="row">
+            @foreach (var commande in Model.Commandes)
+            {
+                var etatClass = commande.Etat switch
+                {
+                    "EN_ATTENTE" => "warning",
+                    "VALIDEE" => "info",
+                    "EN_PREPARATION" => "primary",
+                    "TERMINEE" => "success",
+                    "EN_LIVRAISON" => "info",
+                    "LIVREE" => "success",
+                    "ANNULEE" => "danger",
+                    _ => "secondary"
+                };
+
+                var etatText = commande.Etat switch
+                {
+                    "EN_ATTENTE" => "En attente",
+                    "VALIDEE" => "Validée",
+                    "EN_PREPARATION" => "En préparation",
+                    "TERMINEE" => "Terminée",
+                    "EN_LIVRAISON" => "En livraison",
+                    "LIVREE" => "Livrée",
+                    "ANNULEE" => "Annulée",
+                    _ => commande.Etat
+                };
+
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h5 class="fw-bold mb-0 me-3">@commande.NumeroCommande</h5>
+                                        <span class="badge bg-@etatClass">@etatText</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">
+                                        <i class="bi bi-calendar me-1"></i>
+                                        @commande.DateCommande.ToString("dd MMMM yyyy à HH:mm")
+                                    </p>
+                                    <p class="mb-0">
+                                        @foreach (var ligne in commande.Lignes.Take(3))
+                                        {
+                                            <span class="badge bg-light text-dark me-1">@ligne.NomItem x@ligne.Quantite</span>
+                                        }
+                                        @if (commande.Lignes.Count > 3)
+                                        {
+                                            <span class="text-muted small">+@(commande.Lignes.Count - 3) autre(s)</span>
+                                        }
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <h4 class="text-orange fw-bold mb-2">@commande.MontantTotal.ToString("N0") FCFA</h4>
+                                    <a href="/Commande/Details/@commande.Id" class="btn btn-sm btn-outline-orange">
+                                        Voir détails <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-bag-x display-1 text-muted"></i>
+            <h3 class="mt-4 mb-3">Aucune commande</h3>
+            <p class="text-muted mb-4">Vous n'avez pas encore passé de commande</p>
+            <a href="/Catalogue" class="btn btn-orange btn-lg">
+                <i class="bi bi-arrow-left me-2"></i>Découvrir le menu
+            </a>
+        </div>
+    }
+</div>

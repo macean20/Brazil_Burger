@@ -1,0 +1,168 @@
+@model CommandeViewModel
+@{
+    ViewData["Title"] = "Commande";
+}
+
+<section class="commande-header">
+    <div class="container py-4">
+        <h1 class="h3 fw-bold text-white mb-0">Commande</h1>
+        <p class="text-white-50 mb-0">Choisissez votre mode de réception</p>
+    </div>
+</section>
+
+<div class="container my-5">
+    <form asp-action="Checkout" method="post">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Type de commande</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="TypeCommande" id="surplace" value="Sur place" required />
+                                <label class="btn btn-outline-orange w-100 py-4" for="surplace">
+                                    <i class="bi bi-shop fs-1 d-block mb-2"></i>
+                                    <strong>Sur place</strong>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="TypeCommande" id="arecuperer" value="À récupérer" />
+                                <label class="btn btn-outline-orange w-100 py-4" for="arecuperer">
+                                    <i class="bi bi-geo-alt fs-1 d-block mb-2"></i>
+                                    <strong>À récupérer</strong>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="TypeCommande" id="livraison" value="Livraison" />
+                                <label class="btn btn-outline-orange w-100 py-4" for="livraison">
+                                    <i class="bi bi-bicycle fs-1 d-block mb-2"></i>
+                                    <strong>Livraison</strong>
+                                </label>
+                            </div>
+                        </div>
+                        <span asp-validation-for="TypeCommande" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4" id="livraisonInfo" style="display: none;">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Informations de livraison</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="ZoneId" class="form-label">Zone<span class="text-danger">*</span></label>
+                            <select asp-for="ZoneId" class="form-select" id="zoneSelect">
+                                <option value="">Sélectionnez une zone</option>
+                                @foreach (var zone in Model.Zones)
+                                {
+                                    <option value="@zone.Id" data-prix="@zone.PrixLivraison">@zone.Nom - @zone.PrixLivraison.ToString("N0") FCFA</option>
+                                }
+                            </select>
+                            <span asp-validation-for="ZoneId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AdresseLivraison" class="form-label">Adresse exacte<span class="text-danger">*</span></label>
+                            <textarea asp-for="AdresseLivraison" class="form-control" rows="3" placeholder="Numéro rue, indications..."></textarea>
+                            <span asp-validation-for="AdresseLivraison" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Coordonnées</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Telephone" class="form-label">Téléphone<span class="text-danger">*</span></label>
+                            <input asp-for="Telephone" class="form-control" placeholder="+221 77 123 45 67" />
+                            <span asp-validation-for="Telephone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">Notes (optionnel)</label>
+                            <textarea asp-for="Notes" class="form-control" rows="2" placeholder="Instructions spéciales, allergies, etc."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Récapitulatif</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Sous-total</span>
+                            <strong id="soustotal">@Model.SousTotal.ToString("N0") FCFA</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Frais de livraison</span>
+                            <strong id="fraislivraison" class="text-success">Gratuit</strong>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between mb-4">
+                            <strong>Total</strong>
+                            <h4 class="text-orange fw-bold mb-0" id="total">@Model.SousTotal.ToString("N0")<br/><small>FCFA</small></h4>
+                        </div>
+
+                        <button type="submit" class="btn btn-orange w-100 py-3">
+                            Continuer vers le paiement
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+
+                        <a href="/Panier" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="bi bi-arrow-left me-2"></i>Retour
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const livraisonRadio = document.getElementById('livraison');
+            const livraisonInfo = document.getElementById('livraisonInfo');
+            const zoneSelect = document.getElementById('zoneSelect');
+            const fraisElement = document.getElementById('fraislivraison');
+            const totalElement = document.getElementById('total');
+            const sousTotal = @Model.SousTotal;
+
+            document.querySelectorAll('input[name="TypeCommande"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'Livraison') {
+                        livraisonInfo.style.display = 'block';
+                    } else {
+                        livraisonInfo.style.display = 'none';
+                        zoneSelect.value = '';
+                        updateTotal(0);
+                    }
+                });
+            });
+
+            zoneSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const prix = parseFloat(selectedOption.dataset.prix) || 0;
+                updateTotal(prix);
+            });
+
+            function updateTotal(fraisLivraison) {
+                if (fraisLivraison === 0) {
+                    fraisElement.innerHTML = '<span class="text-success">Gratuit</span>';
+                } else {
+                    fraisElement.textContent = fraisLivraison.toLocaleString() + ' FCFA';
+                }
+
+                const total = sousTotal + fraisLivraison;
+                totalElement.innerHTML = total.toLocaleString() + '<br/><small>FCFA</small>';
+            }
+        });
+    </script>
+}
