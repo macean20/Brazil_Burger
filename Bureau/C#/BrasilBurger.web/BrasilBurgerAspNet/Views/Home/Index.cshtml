@@ -1,0 +1,106 @@
+﻿@model CatalogueViewModel
+@{
+    ViewData["Title"] = "Accueil";
+}
+
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <div class="hero-badge mb-3">
+                    <i class="bi bi-gift-fill me-2"></i>
+                    Livraison gratuite dès 10 000 FCFA
+                </div>
+                <h1 class="display-3 fw-bold mb-4">
+                    Les meilleurs burgers<br />de la ville
+                </h1>
+                <p class="lead mb-4 text-muted">
+                    Commandez en ligne, sur place ou à livrer. Découvrez nos créations
+                    uniques faites avec des ingrédients frais et de qualité.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="/Catalogue" class="btn btn-orange btn-lg px-5 py-3">
+                        Voir le menu
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    <a href="/Catalogue" class="btn btn-outline-dark btn-lg px-5 py-3">
+                        Commander maintenant
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-images">
+                    <div class="row g-3">
+                        @if (Model.Burgers.Any())
+                        {
+                            var count = 0;
+                            foreach (var burger in Model.Burgers.Take(3))
+                            {
+                                <div class="col-@(count == 0 ? "12" : "6")">
+                                    <div class="burger-card-home">
+                                        <img src="@(burger.ImageUrl ?? "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg")" alt="@burger.Nom" class="img-fluid rounded-3 shadow" />
+                                        <div class="burger-overlay">
+                                            <h5 class="text-white fw-bold">@burger.Nom</h5>
+                                            <p class="text-white mb-0">@burger.Prix.ToString("N0") FCFA</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                count++;
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mx-auto mb-3">
+                        <i class="bi bi-egg-fried fs-1 text-orange"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">Ingrédients Frais</h4>
+                    <p class="text-muted">Sélectionnés quotidiennement pour garantir la meilleure qualité</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mx-auto mb-3">
+                        <i class="bi bi-clock-history fs-1 text-orange"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">Livraison Rapide</h4>
+                    <p class="text-muted">Votre commande arrive en 30 minutes ou c'est gratuit!</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mx-auto mb-3">
+                        <i class="bi bi-house-heart fs-1 text-orange"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">Fait Maison</h4>
+                    <p class="text-muted">Nos burgers sont préparés avec passion par notre chef</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="cta-card text-center p-5">
+            <h2 class="display-5 fw-bold mb-4 text-white">
+                Prêt à savourer le meilleur burger de votre vie ?
+            </h2>
+            <p class="lead text-white mb-4">
+                Rejoignez des milliers de clients satisfaits et commandez dès maintenant
+            </p>
+            <a href="/Catalogue" class="btn btn-white btn-lg px-5 py-3">
+                Découvrir nos burgers
+            </a>
+        </div>
+    </div>
+</section>
