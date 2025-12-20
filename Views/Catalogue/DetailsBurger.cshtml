@@ -1,0 +1,80 @@
+@model BurgerDto
+@{
+    ViewData["Title"] = Model.Nom;
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="product-detail-image">
+                <img src="@(Model.ImageUrl ?? "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg")" alt="@Model.Nom" class="img-fluid rounded-3 shadow" />
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="/Catalogue">Catalogue</a></li>
+                    <li class="breadcrumb-item active">@Model.Nom</li>
+                </ol>
+            </nav>
+
+            <h1 class="display-5 fw-bold mb-3">@Model.Nom</h1>
+
+            @if (!Model.Disponible)
+            {
+                <span class="badge bg-danger mb-3">Indisponible</span>
+            }
+            else
+            {
+                <span class="badge bg-success mb-3">Disponible</span>
+            }
+
+            <div class="mb-4">
+                <h2 class="display-6 text-orange fw-bold">
+                    @Model.Prix.ToString("N0") <small class="text-muted fs-5">FCFA</small>
+                </h2>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-2">Description</h5>
+                    <p class="text-muted">@Model.Description</p>
+                </div>
+            }
+
+            <div class="mb-4">
+                <h5 class="fw-bold mb-3">Ingrédients</h5>
+                <p class="text-muted">
+                    Le burger traditionnel avec steak de bœuf, salade, tomate, oignon,
+                    fromage cheddar, sauce spéciale, dans un pain artisanal grillé.
+                </p>
+            </div>
+
+            @if (Model.Disponible)
+            {
+                <form asp-controller="Panier" asp-action="AjouterBurger" method="post" class="mb-4">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="quantite" class="form-label">Quantité</label>
+                            <input type="number" class="form-control" name="quantite" id="quantite" value="1" min="1" max="10" />
+                        </div>
+                        <div class="col-md-8 d-flex align-items-end">
+                            <button type="submit" class="btn btn-orange w-100 btn-lg">
+                                <i class="bi bi-cart-plus me-2"></i>Ajouter au panier
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            }
+
+            <div class="d-flex gap-2">
+                <a href="/Catalogue/Burgers" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Retour au catalogue
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

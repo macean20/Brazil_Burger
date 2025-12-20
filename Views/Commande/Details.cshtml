@@ -1,0 +1,124 @@
+@model CommandeDto
+@{
+    ViewData["Title"] = "Détails de la commande";
+    var etatClass = Model.Etat switch
+    {
+        "EN_ATTENTE" => "warning",
+        "VALIDEE" => "info",
+        "EN_PREPARATION" => "primary",
+        "TERMINEE" => "success",
+        "EN_LIVRAISON" => "info",
+        "LIVREE" => "success",
+        "ANNULEE" => "danger",
+        _ => "secondary"
+    };
+
+    var etatText = Model.Etat switch
+    {
+        "EN_ATTENTE" => "En attente",
+        "VALIDEE" => "Validée",
+        "EN_PREPARATION" => "En préparation",
+        "TERMINEE" => "Terminée",
+        "EN_LIVRAISON" => "En livraison",
+        "LIVREE" => "Livrée",
+        "ANNULEE" => "Annulée",
+        _ => Model.Etat
+    };
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-2">Commande @Model.NumeroCommande</h2>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-calendar me-1"></i>
+                        @Model.DateCommande.ToString("dd MMMM yyyy à HH:mm")
+                    </p>
+                </div>
+                <div>
+                    <span class="badge bg-@etatClass fs-6">@etatText</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Articles commandés</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var ligne in Model.Lignes)
+                    {
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <img src="@(ligne.ImageUrl ?? "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg")"
+                                 alt="@ligne.NomItem"
+                                 class="rounded me-3"
+                                 style="width: 80px; height: 80px; object-fit: cover;" />
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">@ligne.NomItem</h6>
+                                <p class="text-muted small mb-0">@ligne.PrixUnitaire.ToString("N0") FCFA x @ligne.Quantite</p>
+                            </div>
+                            <div class="text-end">
+                                <h6 class="mb-0 fw-bold">@ligne.SousTotal.ToString("N0") FCFA</h6>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Résumé</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sous-total</span>
+                        <strong>@Model.MontantTotal.ToString("N0") FCFA</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total</strong>
+                        <h4 class="text-orange fw-bold mb-0">@Model.MontantTotal.ToString("N0") FCFA</h4>
+                    </div>
+
+                    @if (Model.Paiement != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            Payé par <strong>@Model.Paiement.ModePaiement</strong>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            En attente de paiement
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Livraison</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        @Model.AdresseLivraison
+                    </p>
+                </div>
+            </div>
+
+            <a href="/Commande/MesCommandes" class="btn btn-outline-secondary w-100 mt-3">
+                <i class="bi bi-arrow-left me-2"></i>Retour aux commandes
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,131 @@
+@model CatalogueViewModel
+@{
+    ViewData["Title"] = "Catalogue";
+}
+
+<section class="catalogue-header">
+    <div class="container py-5">
+        <h1 class="display-4 fw-bold text-white mb-2">Nos Burgers</h1>
+        <p class="lead text-white-50">Découvrez notre sélection de burgers artisanaux</p>
+    </div>
+</section>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group" role="group">
+                    <a href="/Catalogue" class="btn @(string.IsNullOrEmpty(Model.FilterType) ? "btn-orange" : "btn-outline-secondary")">
+                        <i class="bi bi-grid me-2"></i>Tous
+                    </a>
+                    <a href="/Catalogue/Menus" class="btn @(Model.FilterType == "menus" ? "btn-orange" : "btn-outline-secondary")">
+                        <i class="bi bi-box me-2"></i>Menus
+                    </a>
+                    <a href="/Catalogue/Burgers" class="btn @(Model.FilterType == "burgers" ? "btn-orange" : "btn-outline-secondary")">
+                        <i class="bi bi-card-list me-2"></i>Burgers
+                    </a>
+                </div>
+
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-funnel me-2"></i>Filtrer
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Prix croissant</a></li>
+                        <li><a class="dropdown-item" href="#">Prix décroissant</a></li>
+                        <li><a class="dropdown-item" href="#">Popularité</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Burgers.Any() || Model.Menus.Any())
+    {
+        <div class="row g-4">
+            @foreach (var burger in Model.Burgers)
+            {
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="@(burger.ImageUrl ?? "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg")" alt="@burger.Nom" />
+                            @if (!burger.Disponible)
+                            {
+                                <div class="badge-soldout">Indisponible</div>
+                            }
+                        </div>
+                        <div class="product-body">
+                            <h5 class="product-title">@burger.Nom</h5>
+                            <p class="product-description">@burger.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="product-price">@burger.Prix.ToString("N0")</span>
+                                    <span class="text-muted small">FCFA</span>
+                                </div>
+                                <div>
+                                    <a href="/Catalogue/DetailsBurger/@burger.Id" class="btn btn-sm btn-outline-secondary me-2">Détails</a>
+                                    @if (burger.Disponible)
+                                    {
+                                        <form asp-controller="Panier" asp-action="AjouterBurger" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@burger.Id" />
+                                            <button type="submit" class="btn btn-sm btn-orange">
+                                                Ajouter
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @foreach (var menu in Model.Menus)
+            {
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="@(menu.Burger?.ImageUrl ?? "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg")" alt="@menu.Nom" />
+                            @if (!menu.Disponible)
+                            {
+                                <div class="badge-soldout">Indisponible</div>
+                            }
+                        </div>
+                        <div class="product-body">
+                            <h5 class="product-title">@menu.Nom</h5>
+                            <p class="product-description small">
+                                @menu.Burger?.Nom + @menu.Boisson?.Nom + @menu.Frite?.Nom
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="product-price">@menu.PrixTotal.ToString("N0")</span>
+                                    <span class="text-muted small">FCFA</span>
+                                    <span class="badge bg-success ms-2">Menu</span>
+                                </div>
+                                <div>
+                                    <a href="/Catalogue/DetailsMenu/@menu.Id" class="btn btn-sm btn-outline-secondary me-2">Détails</a>
+                                    @if (menu.Disponible)
+                                    {
+                                        <form asp-controller="Panier" asp-action="AjouterMenu" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@menu.Id" />
+                                            <button type="submit" class="btn btn-sm btn-orange">
+                                                Ajouter
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted"></i>
+            <p class="text-muted mt-3">Aucun produit disponible pour le moment</p>
+        </div>
+    }
+</div>
