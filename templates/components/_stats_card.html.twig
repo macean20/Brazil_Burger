@@ -1,0 +1,21 @@
+{# templates/components/_stats_card.html.twig #}
+<div class="card border-{{ color }} bg-{{ color }} bg-opacity-10 h-100">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="text-{{ color }}">{{ title }}</h6>
+                <h2 class="mb-0">{{ value }}</h2>
+                <small class="text-muted">{{ subtitle }}</small>
+            </div>
+            <i class="bi bi-{{ icon }} fs-1 text-{{ color }}"></i>
+        </div>
+        {% if trend is defined %}
+        <div class="mt-2">
+            <small class="{{ trend >= 0 ? 'text-success' : 'text-danger' }}">
+                <i class="bi bi-arrow-{{ trend >= 0 ? 'up' : 'down' }}"></i>
+                {{ trend >= 0 ? '+' : '' }}{{ trend }}%
+            </small>
+        </div>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,162 @@
+{# templates/gestionnaire/burger/_modal.html.twig #}
+<div class="modal fade" id="burgerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="burgerModalTitle">
+                    {{ burger.id ? 'Modifier le burger' : 'Nouveau burger' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="burgerForm" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="burger_nom" class="form-label">Nom</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="burger_nom" 
+                                       name="burger[nom]"
+                                       value="{{ burger.nom }}"
+                                       required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="burger_description" class="form-label">Description</label>
+                                <textarea class="form-control" 
+                                          id="burger_description" 
+                                          name="burger[description]"
+                                          rows="3">{{ burger.description }}</textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="burger_prix" class="form-label">Prix (FCFA)</label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               id="burger_prix" 
+                                               name="burger[prix]"
+                                               value="{{ burger.prix }}"
+                                               min="0"
+                                               step="100"
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Disponibilité</label>
+                                        <div class="form-check form-switch mt-2">
+                                            <input class="form-check-input" 
+                                                   type="checkbox" 
+                                                   id="burger_disponible" 
+                                                   name="burger[disponible]"
+                                                   {{ burger.disponible ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="burger_disponible">
+                                                Disponible
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                
+                                {% if burger.imageUrl %}
+                                <div class="mb-3">
+                                    <img src="{{ burger.imageUrl }}" 
+                                         alt="{{ burger.nom }}" 
+                                         class="img-thumbnail mb-2" 
+                                         id="burgerImagePreview"
+                                         style="max-height: 150px;">
+                                </div>
+                                {% else %}
+                                <div class="mb-3">
+                                    <img src="" 
+                                         alt="Prévisualisation" 
+                                         class="img-thumbnail mb-2 d-none" 
+                                         id="burgerImagePreview"
+                                         style="max-height: 150px;">
+                                </div>
+                                {% endif %}
+                                
+                                <div class="file-upload-area" id="burgerImageUploadArea">
+                                    <i class="bi bi-cloud-arrow-up"></i>
+                                    <p class="mb-2">Glissez-déposez ou cliquez</p>
+                                    <p class="small text-muted">JPEG, PNG, WebP (max 2MB)</p>
+                                    <input type="file" 
+                                           class="form-control d-none" 
+                                           id="burger_imageFile"
+                                           name="burger[imageFile]"
+                                           accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="burger[_token]" value="{{ csrf_token('burger_form') }}">
+                    <input type="hidden" name="burger[id]" value="{{ burger.id }}">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="saveBurgerBtn">
+                    <i class="bi bi-save"></i> {{ burger.id ? 'Modifier' : 'Créer' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const burgerImageUploadArea = document.getElementById('burgerImageUploadArea');
+    const burgerImageInput = document.getElementById('burger_imageFile');
+    const burgerImagePreview = document.getElementById('burgerImagePreview');
+    
+    if (burgerImageUploadArea && burgerImageInput) {
+        burgerImageUploadArea.addEventListener('click', function() {
+            burgerImageInput.click();
+        });
+        
+        burgerImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Le fichier est trop volumineux (max 2MB)');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    burgerImagePreview.src = e.target.result;
+                    burgerImagePreview.classList.remove('d-none');
+                    
+                    burgerImageUploadArea.innerHTML = `
+                        <i class="bi bi-check-circle text-success"></i>
+                        <p class="mb-2">${file.name}</p>
+                        <p class="small text-muted">${(file.size / 1024).toFixed(0)} KB</p>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    const saveBurgerBtn = document.getElementById('saveBurgerBtn');
+    if (saveBurgerBtn) {
+        saveBurgerBtn.addEventListener('click', function() {
+            const form = document.getElementById('burgerForm');
+            if (form.checkValidity()) {
+                form.submit();
+            } else {
+                form.classList.add('was-validated');
+            }
+        });
+    }
+});
+</script>

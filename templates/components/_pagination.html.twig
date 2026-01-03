@@ -1,0 +1,55 @@
+{# templates/components/_pagination.html.twig #}
+{% if pagination.pages > 1 %}
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {# Previous page #}
+        <li class="page-item {{ pagination.currentPage == 1 ? 'disabled' : '' }}">
+            <a class="page-link" 
+               href="{{ path(pagination.route, pagination.query|merge({page: pagination.currentPage - 1})) }}"
+               aria-label="Précédent">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        {# First page #}
+        {% if pagination.currentPage > 2 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ path(pagination.route, pagination.query|merge({page: 1})) }}">1</a>
+            </li>
+            {% if pagination.currentPage > 3 %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+        {% endif %}
+
+        {# Pages around current page #}
+        {% for page in range(max(1, pagination.currentPage - 1), min(pagination.pages, pagination.currentPage + 1)) %}
+            <li class="page-item {{ page == pagination.currentPage ? 'active' : '' }}">
+                <a class="page-link" href="{{ path(pagination.route, pagination.query|merge({page: page})) }}">
+                    {{ page }}
+                </a>
+            </li>
+        {% endfor %}
+
+        {# Last page #}
+        {% if pagination.currentPage < pagination.pages - 1 %}
+            {% if pagination.currentPage < pagination.pages - 2 %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+            <li class="page-item">
+                <a class="page-link" href="{{ path(pagination.route, pagination.query|merge({page: pagination.pages})) }}">
+                    {{ pagination.pages }}
+                </a>
+            </li>
+        {% endif %}
+
+        {# Next page #}
+        <li class="page-item {{ pagination.currentPage == pagination.pages ? 'disabled' : '' }}">
+            <a class="page-link" 
+               href="{{ path(pagination.route, pagination.query|merge({page: pagination.currentPage + 1})) }}"
+               aria-label="Suivant">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endif %}

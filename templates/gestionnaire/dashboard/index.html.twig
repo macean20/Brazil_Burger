@@ -1,0 +1,172 @@
+{# templates/gestionnaire/dashboard/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!-- Dashboard Principal -->
+<div id="dashboardPage">
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <div class="logo-circle-sm me-3">
+                    <i class="bi bi-shop text-white"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-bold">Brasil Burger</h5>
+                    <small class="text-muted">Dashboard Gestionnaire</small>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <div class="me-3 text-end d-none d-md-block">
+                    <small class="fw-semibold">Gestionnaire</small><br>
+                    <small class="text-muted">{{ app.user.email }}</small>
+                </div>
+                <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Navigation par onglets -->
+    <div class="container-fluid mt-4">
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_dashboard') }}" 
+                   class="nav-link {{ app.request.attributes.get('_route') == 'gestionnaire_dashboard' ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i> Tableau de bord
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_burger_index') }}" 
+                   class="nav-link {{ app.request.attributes.get('_route') starts with 'gestionnaire_burger' ? 'active' : '' }}">
+                    <i class="bi bi-bag"></i> Burgers
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_menu_index') }}" 
+                   class="nav-link {{ app.request.attributes.get('_route') starts with 'gestionnaire_menu' ? 'active' : '' }}">
+                    <i class="bi bi-menu-button-wide"></i> Menus
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_complement_index') }}" 
+                   class="nav-link {{ app.request.attributes.get('_route') starts with 'gestionnaire_complement' ? 'active' : '' }}">
+                    <i class="bi bi-cup-straw"></i> Compléments
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_commande_index') }}" 
+                   class="nav-link {{ app.request.attributes.get('_route') starts with 'gestionnaire_commande' ? 'active' : '' }}">
+                    <i class="bi bi-cart"></i> Commandes
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_zone_index') }}" 
+                   class="nav-link {{ app.request.attributes.get('_route') starts with 'gestionnaire_' and (app.request.attributes.get('_route') ends with '_zone' or app.request.attributes.get('_route') ends with '_livreur') ? 'active' : '' }}">
+                    <i class="bi bi-truck"></i> Livraisons
+                </a>
+            </li>
+        </ul>
+
+        <!-- Contenu -->
+        <div class="p-4">
+            <h2 class="mb-4">Tableau de bord</h2>
+            
+            <!-- Cartes de statistiques -->
+            {% include 'gestionnaire/dashboard/_stats.html.twig' with {
+                'stats': stats
+            } %}
+            
+            <!-- Graphiques -->
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Commandes par heure (aujourd'hui)</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="ordersChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top 5 Burgers vendus</h5>
+                        </div>
+                        <div class="card-body" id="topBurgersList">
+                            {% if top_burgers|length > 0 %}
+                                {% for burger in top_burgers %}
+                                    <div class="top-burger-item fade-in">
+                                        <div class="d-flex align-items-center">
+                                            <div class="top-burger-rank rank-{{ loop.index }}">
+                                                {{ loop.index }}
+                                            </div>
+                                            <div class="ms-3">
+                                                <strong>{{ burger.nom }}</strong><br>
+                                                <small class="text-muted">{{ burger.quantite_vendue }} vendus</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <strong>{{ burger.chiffre_affaires|number_format(0, '.', ' ') ~ ' XOF' }}</strong>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="empty-state">
+                                    <i class="bi bi-graph-up"></i>
+                                    <p>Aucune vente aujourd'hui</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Données pour le graphique
+        const labels = {{ commandes_par_heure.labels|json_encode|raw }};
+        const data = {{ commandes_par_heure.data|json_encode|raw }};
+        
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Nombre de commandes',
+                    data: data,
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

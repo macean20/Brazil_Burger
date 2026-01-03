@@ -1,0 +1,13 @@
+# config/packages/cloudinary.yaml
+parameters:
+    cloudinary.cloud_name: '%env(CLOUDINARY_CLOUD_NAME)%'
+    cloudinary.api_key: '%env(CLOUDINARY_API_KEY)%'
+    cloudinary.api_secret: '%env(CLOUDINARY_API_SECRET)%'
+    cloudinary.folder: 'brasil-burger'
+
+services:
+    App\Service\Upload\CloudinaryService:
+        arguments:
+            $cloudName: '%cloudinary.cloud_name%'
+            $apiKey: '%cloudinary.api_key%'
+            $apiSecret: '%cloudinary.api_secret%'

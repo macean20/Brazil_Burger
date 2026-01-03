@@ -1,0 +1,189 @@
+{# templates/gestionnaire/burger/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Burgers - Brasil Burger{% endblock %}
+
+{% block body %}
+<div id="dashboardPage">
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <div class="logo-circle-sm me-3">
+                    <i class="bi bi-shop text-white"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-bold">Brasil Burger</h5>
+                    <small class="text-muted">Gestion des Burgers</small>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <div class="me-3 text-end d-none d-md-block">
+                    <small class="fw-semibold">Gestionnaire</small><br>
+                    <small class="text-muted">{{ app.user.email }}</small>
+                </div>
+                <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Navigation par onglets -->
+    <div class="container-fluid mt-4">
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_dashboard') }}" class="nav-link">
+                    <i class="bi bi-speedometer2"></i> Tableau de bord
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_burger_index') }}" class="nav-link active">
+                    <i class="bi bi-bag"></i> Burgers
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_menu_index') }}" class="nav-link">
+                    <i class="bi bi-menu-button-wide"></i> Menus
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_complement_index') }}" class="nav-link">
+                    <i class="bi bi-cup-straw"></i> Compléments
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_commande_index') }}" class="nav-link">
+                    <i class="bi bi-cart"></i> Commandes
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{{ path('gestionnaire_zone_index') }}" class="nav-link">
+                    <i class="bi bi-truck"></i> Livraisons
+                </a>
+            </li>
+        </ul>
+
+        <!-- Contenu -->
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Gestion des Burgers</h2>
+                <a href="{{ path('gestionnaire_burger_new') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Ajouter un burger
+                </a>
+            </div>
+
+            <!-- Recherche -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-10">
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="search" 
+                                   value="{{ search }}"
+                                   placeholder="Rechercher un burger...">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Liste des burgers -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th>Prix</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for burger in burgers %}
+                                <tr>
+                                    <td>
+                                        {% if burger.imageUrl %}
+                                            <img src="{{ burger.imageUrl }}" 
+                                                 alt="{{ burger.nom }}" 
+                                                 class="product-image">
+                                        {% else %}
+                                            <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-image text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ burger.nom }}</td>
+                                    <td>{{ burger.description|slice(0, 50) }}{% if burger.description|length > 50 %}...{% endif %}</td>
+                                    <td>{{ burger.prix|number_format(0, '.', ' ') ~ ' XOF' }}</td>
+                                    <td>
+                                        {% if burger.disponible %}
+                                            <span class="badge bg-success">Disponible</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Indisponible</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="action-icons">
+                                            <a href="{{ path('gestionnaire_burger_edit', {'id': burger.id}) }}" 
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            
+                                            <form method="post" 
+                                                  action="{{ path('gestionnaire_burger_toggle_disponibilite', {'id': burger.id}) }}" 
+                                                  class="d-inline">
+                                                <button type="submit" 
+                                                        class="btn btn-sm {{ burger.disponible ? 'btn-warning' : 'btn-success' }}"
+                                                        title="{{ burger.disponible ? 'Rendre indisponible' : 'Rendre disponible' }}">
+                                                    <i class="bi {{ burger.disponible ? 'bi-eye-slash' : 'bi-eye' }}"></i>
+                                                </button>
+                                            </form>
+                                            
+                                            <form method="post" 
+                                                  action="{{ path('gestionnaire_burger_delete', {'id': burger.id}) }}" 
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce burger ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ burger.id) }}">
+                                                <button type="submit" 
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        title="Supprimer">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="empty-state py-5">
+                                            <i class="bi bi-bag"></i>
+                                            <p>Aucun burger trouvé</p>
+                                            <a href="{{ path('gestionnaire_burger_new') }}" class="btn btn-primary">
+                                                <i class="bi bi-plus-circle"></i> Ajouter votre premier burger
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

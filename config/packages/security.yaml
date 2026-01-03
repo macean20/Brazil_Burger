@@ -1,0 +1,38 @@
+security:
+    password_hashers:
+        App\Entity\Gestionnaire:
+            algorithm: auto
+
+    providers:
+        gestionnaire_provider:
+            entity:
+                class: App\Entity\Gestionnaire
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            lazy: true
+            provider: gestionnaire_provider
+            
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                default_target_path: gestionnaire_dashboard
+            
+            logout:
+                path: app_logout
+                target: app_login
+            
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+
+    access_control:
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/gestionnaire, roles: ROLE_GESTIONNAIRE }

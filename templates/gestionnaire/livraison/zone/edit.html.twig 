@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if zone.id %}Modifier{% else %}Ajouter{% endif %} une zone - Brasil Burger{% endblock %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-map"></i> 
+            {% if zone.id %}
+                Modifier la zone
+            {% else %}
+                Ajouter une zone
+            {% endif %}
+        </h2>
+        <a href="{{ path('gestionnaire_zone_index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form) }}
+                    
+                    <div class="mb-3">
+                        {{ form_row(form.nom) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_row(form.prixLivraison, {
+                            'help': 'Prix en FCFA'
+                        }) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_row(form.description) }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Quartiers</label>
+                        <div id="quartiers-collection" data-prototype="{{ form_widget(form.quartiers.vars.prototype)|e('html_attr') }}">
+                            {% for quartier in form.quartiers %}
+                                <div class="quartier-item mb-2">
+                                    <div class="input-group">
+                                        {{ form_widget(quartier.nom) }}
+                                        <button type="button" class="btn btn-danger remove-quartier">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                    {{ form_errors(quartier.nom) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary mt-2" id="add-quartier">
+                            <i class="bi bi-plus-circle"></i> Ajouter un quartier
+                        </button>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('gestionnaire_zone_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> 
+                            {% if zone.id %}Modifier{% else %}Créer{% endif %}
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const collectionHolder = document.getElementById('quartiers-collection');
+    const addButton = document.getElementById('add-quartier');
+    
+    let index = collectionHolder.querySelectorAll('.quartier-item').length;
+    
+    addButton.addEventListener('click', function() {
+        const prototype = collectionHolder.dataset.prototype;
+        const newForm = prototype.replace(/__name__/g, index);
+        
+        const div = document.createElement('div');
+        div.className = 'quartier-item mb-2';
+        div.innerHTML = `
+            <div class="input-group">
+                ${newForm}
+                <button type="button" class="btn btn-danger remove-quartier">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        collectionHolder.appendChild(div);
+        index++;
+        
+        // Ajouter l'événement de suppression
+        div.querySelector('.remove-quartier').addEventListener('click', function() {
+            div.remove();
+        });
+    });
+    
+    // Gestion de la suppression des quartiers existants
+    document.querySelectorAll('.remove-quartier').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.quartier-item').remove();
+        });
+    });
+});
+</script>
+{% endblock %}

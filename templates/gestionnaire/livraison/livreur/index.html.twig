@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Livreurs | Brasil Burger</title>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <style>
+        .livreurs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .livreurs-table th, .livreurs-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .livreurs-table th {
+            background-color: #f4a62a;
+            color: white;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-primary { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"></div>
+            <span><strong>Brasil</strong> Burger</span>
+        </div>
+
+        <p class="section-title">Espace Gestionnaire</p>
+
+        <nav class="menu">
+            <a href="{{ path('dashboard') }}">📊 Tableau de Bord</a>
+            <a href="{{ path('app_statistics') }}">📈 Statistiques</a>
+            <a href="{{ path('commandes_index') }}">📦 Commandes</a>
+            <a href="{{ path('livreur_index') }}" class="active">🛵 Livreurs</a>
+            <a href="{{ path('zone_index') }}">🏙️ Zones</a>
+            <a href="{{ path('client_index') }}">👥 Clients</a>
+            <a href="{{ path('commandes_livraisons') }}">🚚 Livraisons</a>
+            <a href="{{ path('logout') }}" class="logout">🚪 Déconnexion</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="role gestionnaire">Gestionnaire Web</span>
+            <span class="role client">Client</span>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h1>Gestion des Livreurs</h1>
+            <p class="subtitle">Liste de tous les livreurs</p>
+
+            <a href="{{ path('livreur_new') }}" class="btn btn-primary">Ajouter un Livreur</a>
+
+            <table class="livreurs-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Téléphone</th>
+                        <th>Zone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for livreur in livreurs %}
+                        <tr>
+                            <td>{{ livreur.id }}</td>
+                            <td>{{ livreur.nom }}</td>
+                            <td>{{ livreur.prenom }}</td>
+                            <td>{{ livreur.telephone }}</td>
+                            <td>{{ livreur.zone ? livreur.zone.nom : 'Aucune' }}</td>
+                            <td>
+                                <a href="{{ path('livreur_show', {'id': livreur.id}) }}" class="btn btn-success">Voir</a>
+                                <a href="{{ path('livreur_edit', {'id': livreur.id}) }}" class="btn btn-primary">Modifier</a>
+                                <form method="post" action="{{ path('livreur_delete', {'id': livreur.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce livreur ?');" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livreur.id) }}">
+                                    <button class="btn btn-danger">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">Aucun livreur trouvé.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+{# templates/base.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Brasil Burger - Dashboard Gestionnaire{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- CSS Personnalisé -->
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <!-- Container pour les toasts de notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    {% block body %}{% endblock %}
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- JavaScript Personnalisé -->
+    <script src="{{ asset('js/app.js') }}"></script>
+    
+    {% block javascripts %}{% endblock %}
+</body>
+</html>
