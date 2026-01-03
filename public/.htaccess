@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Rediriger la racine vers /login
+    RewriteRule ^$ /login [R=302,L]
+
+    # Rediriger vers le front controller
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
